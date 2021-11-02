@@ -1,22 +1,26 @@
 <script>
+    export let product_name,details,price,image
+    let new_image
     import Modal from "./Modal.svelte";
     import {createEventDispatcher} from 'svelte'
     const dispatch = createEventDispatcher()
     import { api_url } from "./utils";
     export let open
-    
-    let product_name,image, details, price=null
+    let new_image_picked = false    
     async function handleSubmit(){
-        const [name,extension] = image[0].name.split('.')
-        const image_name = name+new Date().getTime()+'.'+extension
-        const url = `${api_url}/add_item/`
+        let body = {product_name,details,price}
+        if(new_image_picked){
+            const [name,extension] = new_image[0].name.split('.')
+            const image_name = name+new Date().getTime()+'.'+extension
+            body.image = {name:image_name,base64:await upload(new_image[0])}
+        }
+        const url = `${api_url}/item/${product_name}`
         const headers = {'content-type':'application/json'}
-        const method = 'POST'
+        const method = 'PUT'
         
-        const body = JSON.stringify({product_name,details,price,image:{name:image_name,base64:await upload(image[0])}})
-        const res = await fetch(url,{body,method,headers})
+        const res = await fetch(url,{body:JSON.stringify(body),method,headers})
         if(res.status==200){
-            dispatch('success')
+            dispatch('edit_done')
             open = false
         }else{
             alert('Something went wrong!Try Later')
@@ -37,8 +41,11 @@
 </script>
 <Modal  header="Add new item!" bind:open show_cancel_button={true}>
     <form class="mx-4 mt-3" on:submit|preventDefault={handleSubmit}>
-        <input placeholder="Product Name" bind:value={product_name} required>
-        <input type="file" placeholder="Pick an image" bind:files={image} required>
+        <input placeholder="Product Name" bind:value={product_name} required disabled>
+        {#if new_image_picked==false}
+        <a href="{api_url}/{image}" target="_blank" class="text-blue-500 p-2 my-2 block">Curent Image</a>
+        {/if}
+        <input type="file" placeholder="Pick new image" bind:files={new_image} on:change={()=>new_image_picked = true}>
         <textarea type="details" placeholder="Details" bind:value={details} required></textarea>
         <input type="number" placeholder="Price" bind:value={price} required>
         <div class="flex justify-center">

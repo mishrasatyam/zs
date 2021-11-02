@@ -21,7 +21,6 @@ import { api_url } from "$lib/utils";
 import 'virtual:windi.css'
 
 let open=false
-let search 
 async function addItem(){
     open = true
 }
@@ -40,11 +39,11 @@ function handleSearch(event) {
 }
 </script>
 {#if open}
-    <AddItem bind:open/>
+    <AddItem bind:open on:success={()=>get_product(`${api_url}/product_list/?page=1`)}/>
 {/if}
 
 <Topbar on:add_click={addItem} />
 <div class="mx-10">
     <Search on:search={handleSearch}/>
-    <Display {result} {page_count} {current_page} bind:page on:page_change={get_product(`${api_url}/product_list/?page=${page}`)}/>
+    <Display {result} {page_count} {current_page} bind:page on:page_change={()=>get_product(`${api_url}/product_list/?page=${page}`)} on:delete={()=>get_product(`${api_url}/product_list/?page=${page}`)} on:edit_done={()=>get_product(`${api_url}/product_list/?page=${page}`)}/>
 </div>
