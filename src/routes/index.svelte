@@ -43,7 +43,7 @@ function handleSearch(event) {
 {/if}
 
 <Topbar on:add_click={addItem} />
-<div class="mx-10">
+<div class="mx-1.5 sm:mx-10">
     <Search on:search={handleSearch}/>
     <Display {result} {page_count} {current_page} bind:page on:page_change={()=>get_product(`${api_url}/product_list/?page=${page}`)} on:delete={()=>get_product(`${api_url}/product_list/?page=${page}`)} on:edit_done={()=>get_product(`${api_url}/product_list/?page=${page}`)}/>
 </div>
