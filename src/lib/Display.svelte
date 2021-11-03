@@ -32,7 +32,7 @@
 {#if open}
     <EditItem {product_name} {details} {price} {image} bind:open on:edit_done/>
 {/if}
-<div class="m-2 flex ">
+<div class="m-2 grid grid-cols-2 sm:grid-cols-4">
     {#each result as el}
     <div class="shadow-lg rounded-lg p-5 bg-green-100 m-5">
         <header class="font-bold capitalize p-2">{el.product_name}</header>
